@@ -57,6 +57,6 @@ Describe how your project was designed, what choices you made, how things are or
 
 **Results**
 ---
-![output](https://github.com/mulugetakem/elma/tree/personal/img/output.png)
+![output](img/output.png)
 
 This software is open source and uses the MIT license. Details can be found [here](https://github.com/klavinslab/elma).
