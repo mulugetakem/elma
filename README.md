@@ -42,26 +42,21 @@ notice the IP address you get here. it usally starts with 172.17.x.x
 Go to the main(primary) container and run the following command
 
     ./bin/driving_cyberdefence
-The command above is used to start the car and cyber monitor. You can now send pings from the other secondary container and the behaviour is:
+The command above is used to start the car and cyber monitor. You can now send ICMP packets from the other secondary container (`ping 172.17.x.x`) and the behaviour is:
 - If the ICMP packets coming into the car is small then nothing happens
-- if the ICMP packets coming into the car is greater than a certain threshold (>5 in this case :) ) . Then the user is warned about a possible ICMP packet
-- If the ICMP packets coming into the car is much higher and threatening (>10 in this case :)) . A posiive feedback is applied and the car will be slowly brought to stop. 
+- if the ICMP packets coming into the car is greater than a certain threshold (>5 in this case :smile: ) . Then the user is warned about a possible ICMP packet
+- If the ICMP packets coming into the car is much higher and threatening (>10 in this case :smile: ) . A posiive feedback is applied and the car will be slowly brought to stop. 
 
-Coming Soon....
 
-Milestones
-====
-1.  Exploration (03/10): This stage mainly feasibility study and 
-2. Implement Elma's cruise control (03/15)
-3. Define classes and methods that will be used (03/15)
-4. Write Test Cases  (03/15)
-5. Implement classes and methods  (03/22)
-6. Code Complete and Test Pass: (03/15)
-7. Documentation 03/22
+
+**Architecture**
+--
+Describe how your project was designed, what choices you made, how things are organized, etc.
 	
 
 
-License
-===
+**Results**
+---
+
 
 This software is open source and uses the MIT license. Details can be found [here](https://github.com/klavinslab/elma).
