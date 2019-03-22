@@ -44,7 +44,7 @@ Go to the main(primary) container and run the following command
     ./bin/driving_cyberdefence
 The command above is used to start the car and cyber monitor. You can now send ICMP packets from the other secondary container (`ping 172.17.x.x`) and the behaviour is:
 - If the ICMP packets coming into the car is small then nothing happens
-- if the ICMP packets coming into the car is greater than a certain threshold (>5 in this case :smile: ) . Then the user is warned about a possible ICMP packet
+- if the ICMP packets coming into the car is greater than a certain threshold (>5 in this case :smile: ) . Then the driver is warned about a possible ICMP packet
 - If the ICMP packets coming into the car is much higher and threatening (>10 in this case :smile: ) . A posiive feedback is applied and the car will be slowly brought to stop. 
 
 
@@ -57,6 +57,6 @@ Describe how your project was designed, what choices you made, how things are or
 
 **Results**
 ---
-
+![output](https://github.com/mulugetakem/elma/tree/personal/img/output.png)
 
 This software is open source and uses the MIT license. Details can be found [here](https://github.com/klavinslab/elma).
