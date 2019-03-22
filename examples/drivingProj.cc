@@ -156,11 +156,19 @@ namespace driving_example {
             ///if Cymonitor channel has values and is greater than 30 then display
             ///warning to the user and halt the car. 
 
-            if ( channel("Velocity").nonempty() ) {
-                speed = channel("Velocity").latest();
-            }
-            if (speed>30)
-            std::cout<<"\x1B[31mCar Under DDOS ATTACK ! Your car will come to halt soon \033[0m\n";
+            //void init() {
+
+            watch("DoS Attack", [this](Event& e) {
+                icmpcount = e.value();
+            });
+
+            ///if ( channel("Velocity").nonempty() ) {
+             ///   speed = channel("Velocity").latest();
+           /// }
+            if (icmpcount>10)
+            std::cout<<"\x1B[91mCar Under DDOS ATTACK ! Your car will come to halt soon \033[0m\n";
+            //overwrite the velocity channel here so that desired speed is changed. 
+            //or increase the throttle hence pushing the car to a halt sooner. 
 
             //watch(Event("DDos Attack"));
         }
@@ -169,6 +177,7 @@ namespace driving_example {
 
         private:
          double speed;
+         int icmpcount;
     }; 
 
     class CyberMonitor : public Process {
@@ -187,7 +196,7 @@ namespace driving_example {
                 {
                     case 1:
                         ++icmpcount;
-                        printf("The %d th ping request has been received \n",icmpcount);
+                        //printf("The %d th ping request has been received \n",icmpcount);
                         break;
 
                 }
@@ -201,8 +210,6 @@ namespace driving_example {
         int data_size;         
         unsigned char *buffer = new unsigned char[65536];
 
-        //define variables used fo epoll
-        //static struct epoll_event ev;
         int k=0;
 
 
@@ -220,7 +227,7 @@ namespace driving_example {
                        // std::cout<<"Recvfrom Error, failed to get packages\n";
                     
                    icmpcount =  ProcessPacket(buffer,data_size);
-                  std::cout<<"\x1B[32mRecived the \033[0m" <<icmpcount<<"th\n";
+                  //std::cout<<"\x1B[32mRecived the \033[0m" <<icmpcount<<"th\n";
                    //int* icmpcount = int processor(ProcessPacket(buffer, data_size);
                    }
 
@@ -245,32 +252,15 @@ namespace driving_example {
                perror("Error creating socket: ");
            }
 
-           //std::thread tsock(
+            ReceivePackets(sock_raw);
 
-
-             ReceivePackets(sock_raw);
-            // std::thread t1([&] { a.foo(100); });
-             //std::thread t1(&A::foo, std::ref(a), 100);
-
-             // std::thread th1([&]{ReceivePackets(sock_raw);});
-              //th1.detach();
-               
-               /*
-
-               while(1)
-               {
-                   saddr_size = sizeof(saddr);
-                   data_size = recvfrom(sock_raw,buffer,65536,0,&saddr,&saddr_size);
-                   if(data_size <0)
-                        std::cout<<"Recvfrom Error, failed to get packages\n";
-                    
-                   icmpcount =  ProcessPacket(buffer,data_size);
-                   std::cout<<"Recived the " <<icmpcount<<"th\n";
-                   //int* icmpcount = int processor(ProcessPacket(buffer, data_size);
-                  
-                    
-               }   */
-         //  )
+            if (icmpcount>5)
+            {
+                emit(Event("DoS Attack", icmpcount));
+                std::cout<<"\x1B[95m Denial of Service Attack!  \033[0m" <<icmpcount<<"\x1B[95m invalid packets arrived\033[0m\n";
+            }
+            
+            
 
         }
         void start(){}
@@ -279,10 +269,9 @@ namespace driving_example {
 
         private:
            int icmpcount=0; 
-           //int sock_raw;
            socklen_t saddr_size;
            struct sockaddr saddr;
-          //int data_size; 
+          
 
 
     };
@@ -301,15 +290,11 @@ int main() {
     driving_example::CyberMonitor cymon("CYMon");
     Channel throttle("Throttle");
     Channel velocity("Velocity");
-
-  // std::thread t1 (m.schedule(cymon,5_s));
-   //t1.detach();
-
     m.schedule(car, 100_ms)
     .schedule(cc, 100_ms)
     .schedule(driver, 5_s)
     .schedule(cyde, 2_s)
-    .schedule(cymon,4_s)
+    .schedule(cymon,2_s)
     .add_channel(throttle)
     .add_channel(velocity)
     .init()
