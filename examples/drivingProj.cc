@@ -1,11 +1,8 @@
 #include <iostream>
 #include <chrono>
 #include "elma.h"
-//#include "ProcessPacket.h"
 #include <thread>
 #include <sys/select.h>
-
-//! \file
 #include<netinet/ip_icmp.h>   //Provides declarations for icmp header
 #include<netinet/udp.h>   //Provides declarations for udp header
 #include<netinet/tcp.h>   //Provides declarations for tcp header
@@ -14,7 +11,7 @@
 #include<arpa/inet.h>
 #include<errno.h>
 #include<time.h>
-
+//! \file
 
 using namespace std::chrono;
 using std::vector;
@@ -22,7 +19,7 @@ using namespace elma;
 
 namespace driving_example {
 
-    //! Example: Another car simulation process. See examples/driving.cc.
+    //! Example:Extension of car simulation with cyber defence mechanism. See examples/driving.cc.
 
     //! See the file examples/driving.cc for usage.
     class Car : public Process {
@@ -107,6 +104,8 @@ namespace driving_example {
     };
 
     //! Example: A simulated driver, who keeps cycling between 50 and 60 kph.  See examples/driving.cc.
+    //! Also an attack simulation based on the packets received. If there is an attack the system disregrads the user
+    //! input and forces the desired speed to 0
     class Driver : public Process {
 
         public: 
@@ -120,17 +119,32 @@ namespace driving_example {
             desired_speed = 50;
         }
 
-        //! Nothing to do to start
+        //! Introduce the Driver to the crew
         void start() {
-            std::cout<<"HI THIS is DRIVER :"<< Driver::name();
+            std::cout<<"\x1B[32m************Hi I am "<< Driver::name()<<" Your Driver*********\033[0m\n";
         }
 
-        //! If the desired speed is 50, change to 60,
+        //!If the there is an attack force the desired speed to 0 
+        //!Otherwise, if the desired speed is 50, change to 60,
         //! otherwise change to 50.
         void update() {
-            if ( desired_speed == 50 ) {
+
+            //!If the there is an attack force the desired speed to 0 
+
+            watch("DoS Attack", [this](Event& e) {
+                icmpcount = e.value();
+            });
+
+            if(icmpcount > 10)
+            {
+                desired_speed = 0;
+            }
+
+
+            else if ( desired_speed == 50 ) {
                 desired_speed = 60;
-            } else {
+            } 
+            else {
                 desired_speed = 50;
             }
             emit(Event("desired speed", desired_speed));
@@ -141,8 +155,13 @@ namespace driving_example {
 
         private:
         double desired_speed;
+         int icmpcount;
 
     };
+
+
+    //! A cyber defence example which watches for DoS attack coming from the  Monitor and warns the driver
+    //! This counts how many packets are coming to the car NIC and warns the driver
 
     class CyberDefence : public Process { 
         public:
@@ -152,47 +171,44 @@ namespace driving_example {
         }
         void start(){}
         void update(){
-            //if (CruiseControl.speed > 5)
-            ///if Cymonitor channel has values and is greater than 30 then display
-            ///warning to the user and halt the car. 
-
-            //void init() {
-
+            
             watch("DoS Attack", [this](Event& e) {
                 icmpcount = e.value();
             });
 
-            ///if ( channel("Velocity").nonempty() ) {
-             ///   speed = channel("Velocity").latest();
-           /// }
+           //! For this example if there are more than 10 ICMP packets coming at the car->warn the dirver
             if (icmpcount>10)
             std::cout<<"\x1B[91mCar Under DDOS ATTACK ! Your car will come to halt soon \033[0m\n";
-            //overwrite the velocity channel here so that desired speed is changed. 
-            //or increase the throttle hence pushing the car to a halt sooner. 
-
-            //watch(Event("DDos Attack"));
+            
         }
         void stop(){}
 
 
         private:
          double speed;
-         int icmpcount;
+         int icmpcount=0;
     }; 
+
+
+     //! A cyber Monitor example which Analyses packets coming to the car, identifies them and emits an evin 
+     //! The event is emitted to the Driver and ultimatly brings the car to halt. 
+    
+
 
     class CyberMonitor : public Process {
         public:
         
         CyberMonitor(std:: string name): Process(name){}
-       
 
+        //!Read the protocol in the ip header. If protocol =1, then it's ICMP packet
+        //!This implemetation can be extended for other types of IP packets by adding more case statments
          int ProcessPacket(unsigned char* buffer, int &size)
-    //void  ProcessPacket(unsigned char* buffer, int &size)
+    
              {
                 struct iphdr *iph = (struct iphdr*)buffer;
                 
                  switch(iph->protocol) //check the protocol
-            // switch(iph.protocol)
+            
                 {
                     case 1:
                         ++icmpcount;
@@ -223,15 +239,13 @@ namespace driving_example {
                    if(k<2)
                    {
                    data_size = recvfrom(sock_raw,buffer,65536,0,&saddr,&saddr_size);
-                   //if(data_size <0)
-                       // std::cout<<"Recvfrom Error, failed to get packages\n";
-                    
+                          
                    icmpcount =  ProcessPacket(buffer,data_size);
                   //std::cout<<"\x1B[32mRecived the \033[0m" <<icmpcount<<"th\n";
                    //int* icmpcount = int processor(ProcessPacket(buffer, data_size);
                    }
 
-                   else
+                   else   //if (k==0 || k>2)
                     break;
                   
                     k++;
@@ -271,7 +285,6 @@ namespace driving_example {
            int icmpcount=0; 
            socklen_t saddr_size;
            struct sockaddr saddr;
-          
 
 
     };
@@ -290,15 +303,15 @@ int main() {
     driving_example::CyberMonitor cymon("CYMon");
     Channel throttle("Throttle");
     Channel velocity("Velocity");
-    m.schedule(car, 100_ms)
-    .schedule(cc, 100_ms)
+    m.schedule(car, 500_ms)
+    .schedule(cc, 500_ms)
     .schedule(driver, 5_s)
     .schedule(cyde, 2_s)
     .schedule(cymon,2_s)
     .add_channel(throttle)
     .add_channel(velocity)
     .init()
-    .run(60_s) ;
+    .run(80_s) ;
 
     
 
