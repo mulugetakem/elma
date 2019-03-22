@@ -8,29 +8,6 @@ ELMA
 - [Events and finite state machines](https://github.com/klavins/ECEP520/tree/master/week_7)
 - [HTTP in event loops](https://github.com/klavins/ECEP520/blob/master/week_8)
 
-**Milestone this Week** 
-----
-
-- Development docker container environemnt is setup with the necessary bits. I used klavins/ecep520:latest
-- I was able to send ICMP packets between two docker containers 
-- The first class  that processes packets coming into the docker hub is implmented via C. More work needs to be done to integrate this to ELMA
->**How to run test the progress**
-1. cd to elma_project. You'll need to instantiate two docker images: Primary one for processing the ip packets and secondary one to send ICMP packets (attacker). 
-2. Run `docker run -v $pwd:/source -it klavins/elma:latest bash` for  both 
-3. Also start another docker container to use as a client. Use the same command as in #2.
-4. On the first container cd to /src/proj folder and run `make`
-5. Before proceeding to run the output, get the IP address of the primary container so that you send ICMP packages from the other docker container: Run this command to get the IP address of the primary docker container 
-
-    `ip a | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | grep 172.17`
-
-5. Now start processing packets on the primary docker image via `./bin/cyberdefence` 
-6. Let #5 run and from the secondary docker ping the ip address of the primary docker.  `ping <172.17.x.x> `
-7. You'll notice the primary continer identifes it has received ICMP packets and starts to count. The out put will be similar [this one](https://github.com/mulugetakem/elma_project/blob/master/img/primaryprocess.PNG)
-
-
-
-
-
 
  
 
@@ -53,14 +30,22 @@ With the widespread adaptation of Autonomous vehicles, cyber security is  of utm
 
 **Execution**
 --
-To simulate a DoS attack, you would need to start another instance of the same docker image. This secodary docker will be used to simulate as DoS attacker
+To simulate a DoS attack, you would need to start another instance of the same docker image. This second container will be used to simulate a DoS attacker. You can add more instances to emulate a DDoS attack. 
 
     docker run -v $PWD:/source -it klavins/elma:latest bash
 on the primary docker image run the following code to get the IP address of the docker so that you can send ping (ICMP Flood) from the secodary docker image. 
 
     ip a | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | grep 172.17
 
+notice the IP address you get here. it usally starts with 172.17.x.x 
 
+Go to the main(primary) container and run the following command
+
+    ./bin/driving_cyberdefence
+The command above is used to start the car and cyber monitor. You can now send pings from the other secondary container and the behaviour is:
+- If the ICMP packets coming into the car is small then nothing happens
+- if the ICMP packets coming into the car is greater than a certain threshold (>5 in this case :) ) . Then the user is warned about a possible ICMP packet
+- If the ICMP packets coming into the car is much higher and threatening (>10 in this case :)) . A posiive feedback is applied and the car will be slowly brought to stop. 
 
 Coming Soon....
 
