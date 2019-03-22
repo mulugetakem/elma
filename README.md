@@ -3,7 +3,7 @@ Securing Elam's Cruise Control from Cyber Attack
 
 ELMA
 ----
-Elma is an event loop and process manager for embedded and reactive systems. Elma is structured as a C++ library of classes on top of which you build your own C++ project. It keeps track of processes, finite state machines, events, and communication channels, executing them at specified frequencies. Elma was developed as part of the University of Washington's [ECE P 520 course](https://github.com/klavins/ECEP520) on advanced embedded systems programming. More information on how Elma was designed can be found in the links below:
+[Elma](http://klavinslab.org/elma/) is an event loop and process manager for embedded and reactive systems. Elma is structured as a C++ library of classes on top of which you build your own C++ project. It keeps track of processes, finite state machines, events, and communication channels, executing them at specified frequencies. Elma was developed as part of the University of Washington's [ECE P 520 course](https://github.com/klavins/ECEP520) on advanced embedded systems programming. More information on how Elma was designed can be found in the links below:
 - [Event loop management](https://github.com/klavins/ECEP520/tree/master/week_6)
 - [Events and finite state machines](https://github.com/klavins/ECEP520/tree/master/week_7)
 - [HTTP in event loops](https://github.com/klavins/ECEP520/blob/master/week_8)
@@ -36,15 +36,31 @@ Elma is an event loop and process manager for embedded and reactive systems. Elm
 
 About This Project
 --------
-With the widespread adaptation of Autonomous vehicles, cyber security is  of utmost value. This is a fun project intended to extend ELMA's functionality. This project is based on ELMA(Event Loop Manager)<HyperLink here>. The Repo is forked from ELMA. In the project I'll demonstrate how to implement a defensive mechanism against commonly known network layer attacks. We'll specifically implement defense and protection mechanism against DoS and D-DoS attacks. 
+With the widespread adaptation of Autonomous vehicles, cyber security is  of utmost value. This is a fun project intended to extend ELMA's functionality. This project is based on [Elma](http://klavinslab.org/elma/). The Repo is forked from ELMA. In the project I'll demonstrate how to implement a cyber defence mechanism against commonly known network layer attacks. We'll specifically implement defense and protection mechanism against DoS and D-DoS attacks. 
 
-Project Implementation
-===========
-ELMA source code along with the Cruise Control implementation. Additionally, C++ Socket library will be used.  The system will listen for any event on a channel called "Firewall". If there are any DoS or DDoS attack an event will be emitted warning the system about possible attack. During which the user is either notified about the breach and the car will be brought to halt. 
+**Installation**
+-------
+[Elma](http://klavinslab.org/elma/) source code along with the driving example is used for this project. Follow the steps below for the installation. 
+
+    git clone https://github.com/mulugetakem/elma.git
+    cd elma
+    docker run -v $PWD:/source -it klavins/elma:latest bash
+    make
+    cd finalproject
+    make
 
 
-How to use
-===
+
+**Execution**
+--
+To simulate a DoS attack, you would need to start another instance of the same docker image. This secodary docker will be used to simulate as DoS attacker
+
+    docker run -v $PWD:/source -it klavins/elma:latest bash
+on the primary docker image run the following code to get the IP address of the docker so that you can send ping (ICMP Flood) from the secodary docker image. 
+
+    ip a | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | grep 172.17
+
+
 
 Coming Soon....
 
