@@ -25,7 +25,7 @@ SOURCES     := $(wildcard $(SRCDIR)/*.cc)
 OBJECTS     := $(patsubst %.cc, $(BUILDDIR)/%.o, $(notdir $(SOURCES)))
 
 #Defauilt Make
-all: directories $(TARGETDIR)/$(TARGET) tests example
+all: directories $(TARGETDIR)/$(TARGET) tests finalproject
 	echo $(SOURCES) $(HEADERS)
 
 #Remake
