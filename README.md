@@ -51,7 +51,51 @@ The command above is used to start the car and cyber monitor. You can now send I
 
 **Architecture**
 --
-Describe how your project was designed, what choices you made, how things are organized, etc.
+Two additional class have been implemented on top of driving class. The CyberMonitor class plays the main role in communicating and analysing the packets coming into the car. The snippets below are used to create a socket , receive packets from the secondary docker image and process the ip header of the packet for further analysis:
+
+    
+        while(1)       
+    
+               {
+                   //insert the select() variables for the timeout here
+                   FD_ZERO(&readfds);
+                   FD_SET(sock_raw, &readfds);
+                   timeout.tv_sec=1;
+                   timeout.tv_usec=0;
+                   sret = select(sock_raw + 1,&readfds,NULL,NULL,&timeout);            
+                   saddr_size = sizeof(saddr);
+                   //the value of k<2 helps to break the loop and go back to the cruisecontrol
+
+                   if(sret == 1 && k<2)
+                   {
+                   data_size = recvfrom(sock_raw,buffer,65536,0,&saddr,&saddr_size); 
+                          
+                   icmpcount =  ProcessPacket(buffer,data_size);
+                  }
+
+                   else   //if (k==0 || k>2)
+                    break;
+                  
+                    k++;
+               }
+In the code above the select() function is used to poll the remote connection for any availalbe data. If none then the while loop exits and shows the execution of cruisecontrol. 
+
+Also the `ProcessPacket(buffer,data_size)` is implemented as shown in the snippet below:
+ 
+    int ProcessPacket(unsigned char* buffer, int &size)
+    
+             {
+                struct iphdr *iph = (struct iphdr*)buffer;                
+                 switch(iph->protocol) //check the protocol. If the value = 1 then it's an ICMP packet which is used by DoS attackes. 
+            
+                {
+                    case 1:
+                        ++icmpcount;  
+                        break;
+                }
+                return icmpcount;  //return the total number of packets being received so that the monitor decides how much danager it poses 
+             } 
+
 ![blockdiagram](img/blockdiagram.png)
 
 
