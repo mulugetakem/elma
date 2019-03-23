@@ -17,7 +17,7 @@ using namespace std::chrono;
 using std::vector;
 using namespace elma;
 
-namespace driving_example {
+namespace driving {
 
     //! Example:Extension of car simulation with cyber defence mechanism. See examples/driving.cc.
 
