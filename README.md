@@ -103,6 +103,7 @@ The figure below shows block diagram representation of the implementation.
 
 **Results**
 ---
+Below is result of executing the code where receiving 5 packets assumed to start overwhelm the car opration and more than 10 packets forces the CyberDefender to stop the car. As can be seen on the output after the 10th packet the car start to decelerate. 
 ![output](img/output.png)
 
 This software is open source and uses the MIT license. Details can be found [here](https://github.com/klavinslab/elma).
