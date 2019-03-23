@@ -13,7 +13,7 @@ ELMA
 
 About This Project
 --------
-With the widespread adaptation of Autonomous vehicles, cyber security is  of utmost value. This is a fun project intended to extend ELMA's functionality. This project is based on [Elma](http://klavinslab.org/elma/). In the project I'll demonstrate how to implement a cyber defence mechanism against commonly known network layer attacks. We'll specifically implement defense and protection mechanism against DoS and D-DoS attacks. The project demonstrates how two separate docker images can communicate via Elma's event and process. 
+With the widespread adaptation of Autonomous vehicles, cyber security is  of utmost value. This is a fun project intended to extend ELMA's functionality. This project is based on [Elma](http://klavinslab.org/elma/). In the project I'll demonstrate how to implement a cyber defence mechanism against commonly known network layer attacks. We'll specifically implement defence and protection mechanism against DoS and D-DoS attacks. The project demonstrates how two separate docker images can communicate via Elma's event and process. 
 
 **Installation**
 -------
