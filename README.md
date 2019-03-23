@@ -96,6 +96,8 @@ Also the `ProcessPacket(buffer,data_size)` is implemented as shown in the snippe
                 return icmpcount;  //return the total number of packets being received so that the monitor decides how much danager it poses 
              } 
 
+The figure below shows block diagram representation of the implementation. 
+
 ![blockdiagram](img/blockdiagram.png)
 
 
